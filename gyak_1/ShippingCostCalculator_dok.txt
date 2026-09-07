@@ -1,0 +1,105 @@
+Megtalált hibák:
+
+A függvény több ponton eltér a specifikációtól. Először is, az országkódot nem alakítja nagybetűssé, így a „hu” nem működik, pedig a feladat szerint kis- és nagybetűvel is megadható. A negatív rendelési értéket és tömeget sem ellenőrzi, holott a specifikáció kimondja, hogy ezek nem lehetnek negatívak.
+
+A súlyhatárok kezelése hibás: az 5 kg pontosan nem esik bele a 2500 Ft-os kategóriába, mert a feltétel „weight > 5”, így 5 kg esetén már a 5000 Ft-os díj számítódik. Ugyanez a probléma a 20 kg-nál is: a feladat szerint 20 kg még 2500 Ft lenne, de a kódban 20 kg már a 5000 Ft-os kategóriába kerül.
+
+Az ingyenes szállítás feltétele is rossz, mert a specifikáció szerint 20 000 Ft felett ingyenes, a kódban viszont „>= 20000”, tehát 20 000 Ft-nál is ingyenes, ami nem felel meg a szabálynak.
+
+Az expressz felár számítása szintén hibás: a feladat szerint az alapdíj 50%-kal növekszik, a kódban viszont csak +50 Ft kerül hozzáadásra, ami teljesen rossz.
+
+Végül az országkód formátuma sincs ellenőrizve, pedig a specifikáció szerint kétbetűs ISO-kódnak kell lennie.
+
+
+
+Tesztesetek:
+
+Teszt 1  
+Bemenet: orderValue=10000, weight=3, country="HU", express=false
+Elvárt eredmény: 1500
+Függvény eredménye: 1500
+
+Teszt 2  
+Bemenet: orderValue=10000, weight=3, country="HU", express=true
+Elvárt eredmény: 2250
+Függvény eredménye: 1550
+
+Teszt 3  
+Bemenet: orderValue=10000, weight=3, country="hu", express=false
+Elvárt eredmény: 1500
+Függvény eredménye: 3000
+
+Teszt 4  
+Bemenet: orderValue=10000, weight=5, country="HU", express=false
+Elvárt eredmény: 2500
+Függvény eredménye: 5000
+
+Teszt 5  
+Bemenet: orderValue=10000, weight=20, country="HU", express=false
+Elvárt eredmény: 2500
+Függvény eredménye: 5000
+
+Teszt 6  
+Bemenet: orderValue=21000, weight=10, country="HU", express=false
+Elvárt eredmény: 0
+Függvény eredménye: 0
+
+Teszt 7  
+Bemenet: orderValue=21000, weight=10, country="HU", express=true
+Elvárt eredmény: 0
+Függvény eredménye: 0
+
+Teszt 8  
+Bemenet: orderValue=10000, weight=10, country="DE", express=false
+Elvárt eredmény: 5000
+Függvény eredménye: 5000
+
+Teszt 9  
+Bemenet: orderValue=10000, weight=10, country="DE", express=true
+Elvárt eredmény: 7500
+Függvény eredménye: 5050
+
+Teszt 10  
+Bemenet: orderValue=10000, weight=25, country="US", express=true
+Elvárt eredmény: 15000
+Függvény eredménye: 10050
+
+
+
+
+Hibák reprodukáló tesztesetei:
+
+Hiba: országkód nincs nagybetűsítve  
+Teszt: calculateShippingCost(10000, 3, "hu", false)
+Kapott: 3000
+Elvárt: 1500
+
+Hiba: 5 kg rossz kategóriába esik  
+Teszt: calculateShippingCost(10000, 5, "HU", false)
+Kapott: 5000
+Elvárt: 2500
+
+Hiba: 20 kg rossz kategóriába esik  
+Teszt: calculateShippingCost(10000, 20, "HU", false)
+Kapott: 5000
+Elvárt: 2500
+
+Hiba: expressz felár rosszul számolódik (50 Ft, nem 50%)  
+Teszt: calculateShippingCost(10000, 3, "HU", true)
+Kapott: 1550
+Elvárt: 2250
+
+Hiba: ingyenes szállítás feltétele hibás (>= 20000)  
+Teszt: calculateShippingCost(20000, 10, "HU", false)
+Kapott: 0
+Elvárt: 2500
+
+Hiba: negatív bemenet nincs ellenőrizve  
+Teszt: calculateShippingCost(-1, 10, "HU", false)
+Kapott: 1500
+Elvárt: hiba
+
+Hiba: express paraméter típusa nincs ellenőrizve  
+Teszt: calculateShippingCost(10000, 10, "HU", "yes")
+Kapott: 2500
+Elvárt: 3750 vagy hiba

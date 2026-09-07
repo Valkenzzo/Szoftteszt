@@ -1,0 +1,73 @@
+Megtalált hibák:
+A függvény több ponton eltér a specifikációtól. Először is, a negatív rendelési értéket nem ellenőrzi, pedig a feladat szerint ez nem megengedett. A függvény így negatív összegre is kiszámolja a kedvezményt, ami hibás működéshez vezet, hiszen negatív fizetendő összeg tér vissza.
+
+A VIP kedvezmény hozzáadása után történik a maximális kedvezmény ellenőrzése. Ez működik, de a specifikáció nem mondja ki egyértelműen, hogy a VIP kedvezményt a limit előtt vagy után kell-e figyelembe venni, ezért ez egy értelmezési pont, amit dokumentálni kell.
+
+Végül a függvény nem dob hibát negatív rendelési érték esetén, hanem egyszerűen visszaad egy negatív fizetendő összeget, ami nem felel meg a specifikációnak.
+
+Tesztesetek:
+Teszt 1
+Bemenet: orderValue=9000, isVip=false
+Elvárt eredmény: 9000
+Függvény eredménye: 9000
+
+Teszt 2
+Bemenet: orderValue=10000, isVip=false
+Elvárt eredmény: 9500
+Függvény eredménye: 9500
+
+Teszt 3
+Bemenet: orderValue=20000, isVip=true
+Elvárt eredmény: 18000
+Függvény eredménye: 18000
+
+Teszt 4
+Bemenet: orderValue=24999, isVip=false
+Elvárt eredmény: 23749.05
+Függvény eredménye: 23749.05
+
+Teszt 5
+Bemenet: orderValue=25000, isVip=false
+Elvárt eredmény: 22500
+Függvény eredménye: 22500
+
+Teszt 6
+Bemenet: orderValue=30000, isVip=true
+Elvárt eredmény: 25500
+Függvény eredménye: 25500
+
+Teszt 7
+Bemenet: orderValue=50000, isVip=false
+Elvárt eredmény: 42500
+Függvény eredménye: 42500
+
+Teszt 8
+Bemenet: orderValue=50000, isVip=true
+Elvárt eredmény: 40000
+Függvény eredménye: 40000
+
+Teszt 9
+Bemenet: orderValue=100000, isVip=true
+Elvárt eredmény: 80000
+Függvény eredménye: 80000
+
+Teszt 10
+Bemenet: orderValue=-1, isVip=false
+Elvárt eredmény: hiba
+Függvény eredménye: -1
+
+Hibák reprodukáló tesztesetei:
+Hiba: negatív rendelési érték nincs ellenőrizve
+Teszt: calculateDiscountedPrice(-1, false)
+Kapott: -1
+Elvárt: hiba
+
+Hiba: negatív érték esetén a függvény tovább számol
+Teszt: calculateDiscountedPrice(-500, true)
+Kapott: -425
+Elvárt: hiba
+
+Hiba: a VIP kedvezmény hozzáadása után történik a max kedvezmény ellenőrzése (specifikáció nem egyértelmű)
+Teszt: calculateDiscountedPrice(50000, true)
+Kapott: 40000
+Elvárt: 40000
