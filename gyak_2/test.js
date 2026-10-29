@@ -44,6 +44,12 @@ QUnit.test("Kezeli a kivonásos jelölés speciális eseteit", function (assert)
   assert.strictEqual(arabicToRomanConverter(944), "CMXLIV");
 });
 
+QUnit.test("Kezeli az ismétlődő számjeleket", function (assert) {
+  assert.strictEqual(arabicToRomanConverter(2), "II");
+  assert.strictEqual(arabicToRomanConverter(333), "CCCXXXIII");
+  assert.strictEqual(arabicToRomanConverter(3888), "MMMDCCCLXXXVIII");
+});
+
 QUnit.test("Kezeli az alsó és felső határértéket", function (assert) {
   assert.strictEqual(arabicToRomanConverter(1), "I");
   assert.strictEqual(arabicToRomanConverter(3999), "MMMCMXCIX");
