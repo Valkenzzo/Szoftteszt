@@ -1,0 +1,101 @@
+Megtalált hibák:
+A függvény nem ellenőrzi, hogy a tömeg vagy bármely méret 0 vagy negatív-e, így érvénytelen csomagokra is kategóriát ad vissza, a specifikációval ellentétesen.
+
+A SMALL kategória feltétele hibás, mivel a specifikáció szerint a tömeg ≤ 2 kg, a kódban viszont < 2 szerepel, így a 2 kg-os csomag nem kerül a SMALL kategóriába.
+
+A SMALL kategória mérethatára hibás, mivel a specifikáció szerint a méretek ≤ 30 cm, a kódban viszont < 30 szerepel, így a 30 cm-es csomag nem kerül a SMALL kategóriába.
+
+A MEDIUM kategória méretfeltétele hibás, mivel a specifikáció szerint egyik méret sem lehet nagyobb 60 cm-nél, a kódban viszont OR kapcsolat szerepel, így elég, ha csak egy méret ≤ 60 cm, a többi lehet akár 200 cm is.
+
+A LARGE kategória feltétele hibás, mivel a specifikáció szerint a tömeg ≤ 30 kg, a kódban viszont ≤ 30 jó, de a méretek feltétele hibásan engedi azokat a csomagokat is, amelyeknél valamely méret 0 vagy negatív (mert nincs INVALID ellenőrzés).
+
+A függvény nem kezeli az INVALID kategóriát, így érvénytelen csomagokra is SMALL/MEDIUM/LARGE/OVERSIZE kategóriát ad vissza.
+
+A kategóriák sorrendje hibás eredményeket okozhat, mivel a SMALL kategória túl szűk, a MEDIUM túl tág, így sok csomag rossz kategóriába kerül.
+
+Tesztesetek:
+Teszt 1
+Bemenet: weight=2, length=30, width=30, height=30
+Elvárt eredmény: SMALL
+Függvény eredménye: MEDIUM
+(hibás SMALL feltétel)
+
+Teszt 2
+Bemenet: weight=1, length=30, width=30, height=30
+Elvárt eredmény: SMALL
+Függvény eredménye: MEDIUM
+(hibás SMALL mérethatár)
+
+Teszt 3
+Bemenet: weight=5, length=200, width=10, height=10
+Elvárt eredmény: OVERSIZE
+Függvény eredménye: MEDIUM
+(hibás MEDIUM OR feltétel)
+
+Teszt 4
+Bemenet: weight=25, length=120, width=120, height=120
+Elvárt eredmény: LARGE
+Függvény eredménye: LARGE
+(helyes — de csak véletlenül)
+
+Teszt 5
+Bemenet: weight=25, length=200, width=120, height=120
+Elvárt eredmény: OVERSIZE
+Függvény eredménye: OVERSIZE
+(helyes — de csak a LARGE feltétel miatt)
+
+Teszt 6
+Bemenet: weight=-1, length=10, width=10, height=10
+Elvárt eredmény: INVALID
+Függvény eredménye: SMALL
+(nincs INVALID ellenőrzés)
+
+Teszt 7
+Bemenet: weight=5, length=-5, width=10, height=10
+Elvárt eredmény: INVALID
+Függvény eredménye: MEDIUM
+(nincs INVALID ellenőrzés)
+
+Teszt 8
+Bemenet: weight=31, length=100, width=100, height=100
+Elvárt eredmény: OVERSIZE
+Függvény eredménye: OVERSIZE
+(helyes)
+
+Teszt 9
+Bemenet: weight=10, length=100, width=100, height=100
+Elvárt eredmény: OVERSIZE
+Függvény eredménye: MEDIUM
+(hibás MEDIUM feltétel)
+
+Teszt 10
+Bemenet: weight=0, length=10, width=10, height=10
+Elvárt eredmény: INVALID
+Függvény eredménye: SMALL
+(nincs INVALID ellenőrzés)
+
+Hibák reprodukáló tesztesetei:
+Hiba: nincs INVALID ellenőrzés
+Teszt: classifyPackage(-1, 10, 10, 10)
+Kapott: SMALL
+Elvárt: INVALID
+
+Hiba: SMALL kategória hibás (< helyett ≤)
+Teszt: classifyPackage(2, 30, 30, 30)
+Kapott: MEDIUM
+Elvárt: SMALL
+
+Hiba: MEDIUM kategória hibás (OR helyett AND)
+Teszt: classifyPackage(5, 200, 10, 10)
+Kapott: MEDIUM
+Elvárt: OVERSIZE
+
+Hiba: MEDIUM túl tág kategória
+Teszt: classifyPackage(10, 100, 100, 100)
+Kapott: MEDIUM
+Elvárt: OVERSIZE
+
+Hiba: negatív méretet nem kezeli INVALID-ként
+Teszt: classifyPackage(5, -5, 10, 10)
+Kapott: MEDIUM
+Elvárt: INVALID

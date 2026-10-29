@@ -1,0 +1,100 @@
+Megtalált hibák:
+A függvény nem ellenőrzi az életkor érvényességét, így negatív vagy 120 év feletti életkor esetén is számol, ami ellentétes a specifikációval.
+
+A 6 év alatti ingyenesség hibás feltétellel szerepel, mivel a kódban age <= 6 szerepel, ami a 6 éveseket is ingyenessé teszi, holott a feladat szerint csak a 6 év alattiak kapnak ingyenes jegyet.
+
+A 65 éves kortól járó kedvezmény hibás feltétellel szerepel, mivel a kódban age > 65 szerepel, ami a 65 éveseket nem kedvezményezi, holott a specifikáció szerint 65 éves kortól jár a kedvezmény.
+
+A diák kedvezmény nem kerül összehasonlításra az életkor szerinti kedvezményekkel, így nem biztosított, hogy mindig a legnagyobb kedvezmény kerüljön alkalmazásra.
+
+A kedvezmények nem kizárólagosak, mivel a diák kedvezmény minden esetben alkalmazásra kerül, még akkor is, ha életkor szerinti kedvezmény már érvényesült.
+
+A 3D felár hibásan szorzóként szerepel, holott a specifikáció szerint fix 800 Ft felár fizetendő, amelyre nem vonatkozik kedvezmény.
+
+Tesztesetek:
+Teszt 1
+Bemenet: age=5, isStudent=false, is3D=false
+Elvárt eredmény: 0
+Függvény eredménye: 0
+
+Teszt 2
+Bemenet: age=6, isStudent=false, is3D=false
+Elvárt eredmény: 3000
+Függvény eredménye: 0
+(hibás 6 év alatti feltétel)
+
+Teszt 3
+Bemenet: age=10, isStudent=false, is3D=false
+Elvárt eredmény: 2100
+Függvény eredménye: 2100
+
+Teszt 4
+Bemenet: age=17, isStudent=true, is3D=false
+Elvárt eredmény: 2100
+Függvény eredménye: 1680
+(halmozott kedvezmény)
+
+Teszt 5
+Bemenet: age=30, isStudent=true, is3D=false
+Elvárt eredmény: 2400
+Függvény eredménye: 2400
+
+Teszt 6
+Bemenet: age=65, isStudent=false, is3D=false
+Elvárt eredmény: 1800
+Függvény eredménye: 3000
+(hibás 65+ feltétel)
+
+Teszt 7
+Bemenet: age=70, isStudent=false, is3D=false
+Elvárt eredmény: 1800
+Függvény eredménye: 1800
+
+Teszt 8
+Bemenet: age=30, isStudent=false, is3D=true
+Elvárt eredmény: 3800
+Függvény eredménye: 5400
+(hibás 3D szorzó)
+
+Teszt 9
+Bemenet: age=17, isStudent=true, is3D=true
+Elvárt eredmény: 2900
+Függvény eredménye: 3024
+(halmozott kedvezmény + hibás 3D szorzó)
+
+Teszt 10
+Bemenet: age=-1, isStudent=false, is3D=false
+Elvárt eredmény: hiba
+Függvény eredménye: 3000
+(nincs életkor‑ellenőrzés)
+
+Hibák reprodukáló tesztesetei:
+Hiba: hibás 6 év alatti feltétel (<= 6)
+Teszt: calculateTicketPrice(6, false, false)
+Kapott: 0
+Elvárt: 3000
+
+Hiba: hibás 65+ kedvezmény (> 65)
+Teszt: calculateTicketPrice(65, false, false)
+Kapott: 3000
+Elvárt: 1800
+
+Hiba: kedvezmények nem kizárólagosak (halmozódnak)
+Teszt: calculateTicketPrice(17, true, false)
+Kapott: 1680
+Elvárt: 2100
+
+Hiba: diák kedvezmény akkor is érvényesül, ha életkor kedvezmény is jár
+Teszt: calculateTicketPrice(70, true, false)
+Kapott: 1440
+Elvárt: 1800
+
+Hiba: 3D felár szorzóként szerepel (1.8), nem fix 800 Ft
+Teszt: calculateTicketPrice(30, false, true)
+Kapott: 5400
+Elvárt: 3800
+
+Hiba: nincs életkor‑ellenőrzés
+Teszt: calculateTicketPrice(-1, false, false)
+Kapott: 3000
+Elvárt: hiba

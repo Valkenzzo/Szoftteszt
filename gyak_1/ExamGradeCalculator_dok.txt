@@ -1,0 +1,102 @@
+Megtalált hibák:
+A függvény nem ellenőrzi az elméleti és gyakorlati pontszámok érvényességét, így negatív vagy a maximális pontszámot meghaladó érték esetén is számol, ami ellentétes a specifikációval.
+
+A vizsga sikerességének feltétele hibásan szerepel, mivel a kódban csak akkor tekinti sikertelennek a vizsgát, ha mindkét minimumfeltétel nem teljesül. A specifikáció szerint már az is bukás, ha bármelyik minimum nem teljesül.
+
+A jegyhatárok hibásak, mivel a kódban a határértékek elcsúsznak: a 60 pont nem kerül a megfelelő kategóriába, a 70 pont hibás jegyet kap, és a 85 pont sem a specifikáció szerinti osztályzatot eredményezi.
+
+A ponttartományok felső határai hibásan vannak kezelve, mivel a kódban <= operátor szerepel, ami a határértékeket rossz kategóriába sorolja (pl. 60, 70, 85).
+
+A jegy megállapítása hibás logikát követ, mivel a ponttartományok nem egyeznek a specifikációban megadott 0–49, 50–59, 60–69, 70–84, 85–100 tartományokkal.
+
+A függvény nem kezeli a 100 pont feletti összpontszámot, így érvénytelen input esetén is jegyet ad.
+
+Tesztesetek:
+Teszt 1
+Bemenet: theory=30, practice=20
+Elvárt eredmény: 1
+Függvény eredménye: 1
+
+Teszt 2
+Bemenet: theory=29, practice=40
+Elvárt eredmény: 1
+Függvény eredménye: 2
+(hibás minimumfeltétel-kezelés)
+
+Teszt 3
+Bemenet: theory=60, practice=40
+Elvárt eredmény: 5
+Függvény eredménye: 4
+(hibás határérték-kezelés)
+
+Teszt 4
+Bemenet: theory=30, practice=19
+Elvárt eredmény: 1
+Függvény eredménye: 1
+
+Teszt 5
+Bemenet: theory=50, practice=10
+Elvárt eredmény: 1
+Függvény eredménye: 2
+(hibás minimumfeltétel-kezelés)
+
+Teszt 6
+Bemenet: theory=40, practice=30
+Elvárt eredmény: 3
+Függvény eredménye: 2
+(hibás ponttartomány)
+
+Teszt 7
+Bemenet: theory=45, practice=25
+Elvárt eredmény: 4
+Függvény eredménye: 3
+(hibás ponttartomány)
+
+Teszt 8
+Bemenet: theory=55, practice=30
+Elvárt eredmény: 5
+Függvény eredménye: 4
+(hibás ponttartomány)
+
+Teszt 9
+Bemenet: theory=60, practice=25
+Elvárt eredmény: 5
+Függvény eredménye: 4
+(hibás határérték-kezelés)
+
+Teszt 10
+Bemenet: theory=-1, practice=10
+Elvárt eredmény: hiba
+Függvény eredménye: 1
+(nincs inputellenőrzés)
+
+Hibák reprodukáló tesztesetei:
+Hiba: nincs inputellenőrzés
+Teszt: calculateGrade(-1, 10)
+Kapott: 1
+Elvárt: hiba
+
+Hiba: hibás minimumfeltétel (AND helyett OR kell)
+Teszt: calculateGrade(29, 40)
+Kapott: 2
+Elvárt: 1
+
+Hiba: hibás ponttartomány (60 pont rossz jegyet kap)
+Teszt: calculateGrade(60, 40)
+Kapott: 4
+Elvárt: 5
+
+Hiba: hibás ponttartomány (70 pont rossz jegyet kap)
+Teszt: calculateGrade(40, 30)
+Kapott: 2
+Elvárt: 3
+
+Hiba: hibás ponttartomány (85 pont rossz jegyet kap)
+Teszt: calculateGrade(55, 30)
+Kapott: 4
+Elvárt: 5
+
+Hiba: összpontszám nem validálja a 100 feletti értéket
+Teszt: calculateGrade(60, 50)
+Kapott: 5
+Elvárt: hiba

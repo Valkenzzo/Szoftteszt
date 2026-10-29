@@ -1,0 +1,89 @@
+Megtalált hibák:
+A megkezdett órák számítása hibás, mert a kód nem vonja le az első 15 percet a díjköteles időből.
+
+A 15 perc utáni időt a függvény nem kezeli külön, így több esetben rossz óraszámot kap.
+
+A hétvégi kedvezmény hibás alapértékre kerül alkalmazásra a hibás óraszámítás miatt.
+
+A VIP kedvezmény hibás alapértékre kerül alkalmazásra a hibás óraszámítás miatt.
+
+A kedvezmények sorrendje nincs tisztázva a specifikációban, de a kód egy adott sorrendet használ, amit dokumentálni kell.
+
+A napi maximális díj helyes, de a hibás óraszámítás miatt nem mindig a megfelelő összegre korlátozza a díjat.
+
+Tesztesetek:
+Teszt 1
+Bemenet: minutes=10, isWeekend=false, isVip=false
+Elvárt eredmény: 0
+Függvény eredménye: 0
+
+Teszt 2
+Bemenet: minutes=16, isWeekend=false, isVip=false
+Elvárt eredmény: 600
+Függvény eredménye: 600
+
+Teszt 3
+Bemenet: minutes=70, isWeekend=false, isVip=false
+Elvárt eredmény: 600
+Függvény eredménye: 1200
+
+Teszt 4
+Bemenet: minutes=70, isWeekend=true, isVip=false
+Elvárt eredmény: 300
+Függvény eredménye: 600
+
+Teszt 5
+Bemenet: minutes=70, isWeekend=false, isVip=true
+Elvárt eredmény: 480
+Függvény eredménye: 960
+
+Teszt 6
+Bemenet: minutes=600, isWeekend=false, isVip=false
+Elvárt eredmény: 5000
+Függvény eredménye: 5000
+
+Teszt 7
+Bemenet: minutes=600, isWeekend=true, isVip=false
+Elvárt eredmény: 2500
+Függvény eredménye: 2500
+
+Teszt 8
+Bemenet: minutes=600, isWeekend=true, isVip=true
+Elvárt eredmény: 2000
+Függvény eredménye: 2000
+
+Teszt 9
+Bemenet: minutes=2000, isWeekend=false, isVip=false
+Elvárt eredmény: 5000
+Függvény eredménye: 5000
+
+Teszt 10
+Bemenet: minutes=-1, isWeekend=false, isVip=false
+Elvárt eredmény: hiba
+Függvény eredménye: hiba
+
+Hibák reprodukáló tesztesetei:
+Hiba: a megkezdett órák számítása hibás, mert nem vonja le az első 15 percet
+Teszt: calculateParkingFee(70, false, false)
+Kapott: 1200
+Elvárt: 600
+
+Hiba: hétvégi kedvezmény hibás, mert a hibás óraszámításra épül
+Teszt: calculateParkingFee(70, true, false)
+Kapott: 600
+Elvárt: 300
+
+Hiba: VIP kedvezmény hibás, mert a hibás óraszámításra épül
+Teszt: calculateParkingFee(70, false, true)
+Kapott: 960
+Elvárt: 480
+
+Hiba: a 15 perc utáni időt nem kezeli külön
+Teszt: calculateParkingFee(20, false, false)
+Kapott: 600
+Elvárt: 600 (helyes), de 70 percnél már hibás → lásd fent
+
+Hiba: negatív bemenet helyesen hibát dob, de a specifikáció szerint további paraméterek ellenőrzése is szükséges
+Teszt: calculateParkingFee(-1, false, false)
+Kapott: hiba
+Elvárt: hiba
