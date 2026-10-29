@@ -1,0 +1,117 @@
+
+
+1. DiscountCalculator — kedvezmény számítása
+
+Hibás rész:
+
+if (orderValue > 10000 && orderValue < 25000) { ... }
+else if (orderValue >= 25000 && orderValue <= 50000) { ... }
+else if (orderValue > 50000) { ... }
+
+if (isVip === true) {
+    discount += 5;
+}
+...
+return orderValue - discount;
+
+Mi a hiba?
+- A 10 000 Ft-os határ kimarad, pedig onnantól jár az 5% kedvezmény.
+- Az 50 000 Ft a 10%-os sávba kerül, holott már 15% jár.
+- A VIP-kedvezmény 5-tel növeli a változót, miközben az alapkedvezményeket törtrészként tárolja (0.05). Így a VIP-kedvezmény és a 20%-os korlát hibásan működik.
+- A visszatérés az összeget vonja le, nem a kedvezményes összeget.
+- A negatív rendelési értéket nem utasítja el.
+
+Javítás:
+A sávhatárokat a specifikáció szerint kell megadni (>= 10000, >= 25000, >= 50000), a VIP-kedvezmény legyen 0.05, az eredmény pedig orderValue * (1 - discount). Negatív értéknél hibát kell jelezni.
+
+2. ParkingFeeCalculator — parkolási díj
+
+Hibás rész:
+
+if (minutes < 15) {
+    return 0;
+}
+
+let hours = Math.floor(minutes / 60);
+let fee = hours * 600;
+
+if (isVip) {
+    fee = fee - 20;
+}
+
+Mi a hiba?
+- A Math.floor(minutes / 60) nem számolja a megkezdett órát, és az ingyenes első 15 percet sem vonja le. Például 16 perc esetén 0 Ft-ot ad.
+- A VIP-kedvezményből 20 Ft-ot von le, nem 20%-ot.
+- A negatív idő nincs elutasítva.
+
+Javítás:
+Legfeljebb 15 percre 0 Ft jár; afelett az órák számát a Math.ceil((minutes - 15) / 60) képlettel kell kiszámítani. A hétvégi díj a normál díj fele, a VIP-kedvezmény pedig további 20%, vagyis szorzás 0.8-del. Negatív időnél hibát kell jelezni.
+
+3. CinemaTicketCalculator — mozijegyár
+
+Hibás rész:
+
+if (age <= 6) {
+    price = 0;
+} else if (age < 18) { ... }
+else if (age > 65) { ... }
+
+if (isStudent) {
+    price = price * 0.8;
+}
+
+if (is3D) {
+    price = price * 1.8;
+}
+
+Mi a hiba?
+- A specifikáció szerint 6 éves kor alatt ingyenes a jegy, ezért a <= 6 feltétel hibás; 6 évesen 30% kedvezmény jár.
+- 65 éves kortól jár a 40%-os kedvezmény, tehát age > 65 helyett age >= 65 kell.
+- A diákkedvezményt a program hozzáadja az életkor szerinti kedvezményhez. Ehelyett csak a legnagyobb kedvezmény alkalmazható.
+- A 3D felár 800 Ft, nem az ár 1,8-szerese. A kedvezmény nem vonatkozik a felárra.
+- A negatív és 120 év feletti kort érvénytelenként kell kezelni, de a program ezt nem ellenőrzi.
+
+Javítás:
+Ellenőrizni kell, hogy az életkor 0–120 között van-e; az életkori és diákkedvezmények közül csak a legnagyobbat kell alkalmazni; a 3D felárat az árhoz kell adni: price += 800.
+
+4. ExamGradeCalculator — vizsgajegy
+
+Hibás rész:
+
+if (theory < 30 && practice < 20) {
+    return 1;
+}
+...
+} else if (total <= 60) {
+    return 2;
+} else if (total <= 70) {
+    return 3;
+} else if (total <= 85) {
+    return 4;
+}
+
+Mi a hiba?
+- Sikertelen a vizsga, ha bármelyik rész minimuma nincs meg. Az && miatt a program csak akkor ad elégtelent, ha mindkét minimum hiányzik; || szükséges.
+- A jegyhatárok elcsúsznak: a 60 pont már 3-as, a 70 pont már 4-es, a 85 pont pedig 5-ös.
+- Nincs ellenőrizve, hogy az elméleti pontszám 0–60, a gyakorlati pedig 0–40 közé esik-e.
+
+Javítás:
+A minimumfeltétel legyen theory < 30 || practice < 20. A felső határok: < 50 → 1, < 60 → 2, < 70 → 3, < 85 → 4, különben 5. Érvénytelen pontszám esetén hibát kell jelezni.
+
+5. PackageClassifier — csomagbesorolás
+
+Hibás rész:
+
+if (weight < 2 &&
+    length < 30 && width < 30 && height < 30) { ... }
+
+if (weight <= 10 &&
+    (length <= 60 || width <= 60 || height <= 60)) { ... }
+
+Mi a hiba?
+- A SMALL kategóriában a határok is megengedettek, ezért a < 2 és < 30 helyett <= kell.
+- A MEDIUM kategória méretfeltételénél || szerepel. Így elég, ha egy méret legfeljebb 60 cm; a specifikáció szerint mindhárom méretnek meg kell felelnie, tehát && szükséges.
+- Hiányzik az érvénytelen csomagok ellenőrzése: ha bármely méret vagy a tömeg 0 vagy negatív, INVALID választ kell adni.
+
+Javítás:
+Először ellenőrizni kell a nem pozitív értékeket, majd a kategóriafeltételekben a specifikáció szerinti <= határokat és minden méretre kiterjedő ellenőrzést kell használni.
